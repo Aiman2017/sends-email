@@ -1,11 +1,7 @@
 @extends('users.app')
 @section('content')
     <h1 class="mb-4">Send Message to Users</h1>
-    @foreach($errors->all as $error)
-        <div class="alert alert-danger" role="alert">
-            {{$error}}
-        </div>
-    @endforeach
+    @include('users.errors')
     <form method="POST" action="{{route('users.store')}}">
         @csrf
         <div class="mb-3">
