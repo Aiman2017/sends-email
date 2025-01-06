@@ -42,6 +42,7 @@ class SendMessageController extends Controller
                 ->get();
 
             foreach ($users as $user) {
+
                 if ($this->shouldSendNotification($user)) {
                     Mail::to($user->email)->queue(new SendMessageMail($message->message));
                 }
@@ -51,7 +52,7 @@ class SendMessageController extends Controller
             return redirect()->back();
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Ошибка при отправке сообщения: '.$e->getMessage());
+            Log::error('Ошибка при отправке сообщения: ' . $e->getMessage());
             toastr()->error('Произошла ошибка при отправке сообщения.');
             return redirect()->back();
         }
@@ -59,6 +60,6 @@ class SendMessageController extends Controller
 
     protected function shouldSendNotification(User $user): bool
     {
-        return $user->setting && optional($user->setting)->notification;
+        return $user->setting && $user->setting->notification;
     }
 }

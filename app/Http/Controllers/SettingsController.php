@@ -11,18 +11,23 @@ class SettingsController extends Controller
 
     public function index()
     {
-        return view('users.settings', ['settings' => Setting::query()->first()]);
+        return view('users.settings', ['settings' => Setting::query()->where('user_id', Auth::user()->id)->first()]);
     }
 
     public function store(Request $request)
     {
         $user = Auth::user();
         $request->validate([
-            'notification' => 'boolean',
+            'notification' => 'nullable|boolean',
             'user_id' => 'integer'
         ]);
 
-        Setting::query()->updateOrCreate(['user_id' => $user->id],$request->only('notification', $user->id));
+        $notification = $request->has('notification') ? 1 : 0;
+
+        Setting::query()->updateOrCreate(
+            ['user_id' => $user->id],
+            ['notification' => $notification]
+        );
 
         toastr()->success('Notification changed successfully.');
         return redirect()->back();
